@@ -36,14 +36,15 @@ export const useProductStore = create((set, get) => ({
             const { formData } = get();
             const response = await axios.post(`${BASE_URL}/api/products`, formData);
             // update products
-            set((prevState) => ({
-                products: [response.data.data, ...prevState.products],
-                error: null,
-            }));
+            await get().fetchProducts();
+            // set((prevState) => ({
+            //     products: [response.data.data, ...prevState.products],
+            //     error: null,
+            // }));
             toast.success("Product added successfully.");
             get().resetFormData();
 
-            // ✅ close modal automatically after adding
+            // close modal automatically after adding
             get().closeModal();
         } catch (err) {
             console.log("Error in addProduct function:", err);
@@ -73,10 +74,11 @@ export const useProductStore = create((set, get) => ({
         set({ loading: true });
         try {
             await axios.delete(`${BASE_URL}/api/products/${id}`);
-            set((prevState) => ({
-                products: prevState.products.filter((product) => product.id !== id),
-                error: null,
-            }));
+            await get().fetchProducts();
+            // set((prevState) => ({
+            //     products: prevState.products.filter((product) => product.id !== id),
+            //     error: null,
+            // }));
             toast.success("Product deleted successfully.");
         } catch (err) {
             console.error("Error in deleteProduct function:", err);
@@ -105,12 +107,13 @@ export const useProductStore = create((set, get) => ({
             const { formData } = get();
             const response = await axios.put(`${BASE_URL}/api/products/${id}`, formData);
             set({ currentProduct: response.data.data });
-            set((prevState) => ({
-                products: prevState.products.map((product) =>
-                    product.id === id ? response.data.data : product
-                ),
-                error: null,
-            }));
+            await get().fetchProducts();
+            // set((prevState) => ({
+            //     products: prevState.products.map((product) =>
+            //         product.id === id ? response.data.data : product
+            //     ),
+            //     error: null,
+            // }));
             toast.success("Product updated successfully.");
         } catch (error) {
             console.error("Error in updateProduct function:", error);
